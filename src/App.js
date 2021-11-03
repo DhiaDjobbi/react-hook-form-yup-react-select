@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import Select from "react-select";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as Yup from "yup";
 
-function App() {
+const App = () => {
+  const onSubmit = (data) => console.log(data);
+
+  let schema = Yup.object().shape({
+    iceCreamType: Yup.object().shape({
+      label: Yup.string().required("Required"),
+      value: Yup.string().required("Required"),
+    }),
+  });
+
+  const { control, handleSubmit , formState:{ errors }} = useForm({
+    resolver: yupResolver(schema),
+  });
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Controller
+        name="iceCreamType"
+        control={control}
+        render={({ field }) => (
+          <Select
+            {...field}
+            options={[
+              { value: "chocolate", label: "Chocolate" },
+              { value: "strawberry", label: "Strawberry" },
+              { value: "vanilla", label: "Vanilla" },
+            ]}
+          />
+        )}
+      />
+      <p>{errors.iceCreamType?.message}</p>
+      <input type="submit" />
+    </form>
   );
-}
-
+};
 export default App;
